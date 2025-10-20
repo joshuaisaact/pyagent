@@ -2,26 +2,48 @@ import os
 import sys
 from dotenv import load_dotenv
 from google import genai
+from google.genai import types
 
-load_dotenv()
-api_key = os.environ.get("GEMINI_API_KEY")
-client = genai.Client(api_key=api_key)
+
 
 def main():
-    if len(sys.argv) < 2:
-        print("you must supply a prompt!")
+    load_dotenv()
+
+    args = [arg for arg in sys.argv[1:] if arg != "--verbose"]
+
+    if not args:
+        print("PyAgent Code Assistant")
+        print('\nUsage: python main.py "your prompt here" [--verbose]')
+        print('Example: python main.py "Build me a todo app"')
         sys.exit(1)
 
+    api_key = os.environ.get("GEMINI_API_KEY")
+    client = genai.Client(api_key=api_key)
+
+    verbose = "--verbose" in sys.argv
+
+    user_prompt = " ".join(args)
+
+    if verbose:
+        print(f"User prompt: {user_prompt}\n")
+
+    messages = [
+        types.Content(role="user", parts=[types.Part(text=user_prompt)]),
+    ]
+
+    generate_content(client, messages, verbose)
+
+
+def generate_content(client, messages, verbose):
     response = client.models.generate_content(
         model="gemini-2.5-flash",
-        contents=sys.argv[1],
+        contents=messages,
     )
-
+    if verbose:
+        print("Prompt tokens:", response.usage_metadata.prompt_token_count)
+        print("Response tokens:", response.usage_metadata.candidates_token_count)
+    print("Response:")
     print(response.text)
-    print(f"""
-    Prompt tokens: {response.usage_metadata.prompt_token_count}
-    Response tokens: {response.usage_metadata.candidates_token_count}
-    """)
 
 
 if __name__ == "__main__":
