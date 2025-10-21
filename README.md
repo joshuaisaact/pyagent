@@ -2,6 +2,8 @@
 
 A simple AI-powered code agent that can interact with your filesystem and execute Python code using Google's Gemini API.
 
+Built to practice my (rusty) Python.
+
 ### Features
 
 - File Operations: List, read, and write files in a working directory
