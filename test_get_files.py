@@ -28,12 +28,5 @@ def test_get_files_outside_parent():
     assert "outside the permitted working directory" in result
 
 if __name__ == "__main__":
-    # Print outputs for the grader
-    print(get_files_info("calculator", "."))
-    print(get_files_info("calculator", "pkg"))
-    print(get_files_info("calculator", "/bin"))
-    print(get_files_info("calculator", "../"))
-
-    # Run pytest for your own verification
     import pytest
     pytest.main([__file__, "-v"])
